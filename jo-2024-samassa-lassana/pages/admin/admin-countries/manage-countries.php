@@ -110,7 +110,7 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
     </footer>
     <script>
         function openAddContrieForm() {
-            window.location.href = 'add-countrie.php';
+            window.location.href = 'add-contrie.php';
         }
 
         function openModifyContrieForm(id_pays) {
