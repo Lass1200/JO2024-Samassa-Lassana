@@ -132,7 +132,7 @@ img {
 
   nav li {
     width: auto; /* Largeur fixe pour chaque élément du menu */
-    margin-right: 20px;
+    margin-right: 10px;
   }
 
   nav a {

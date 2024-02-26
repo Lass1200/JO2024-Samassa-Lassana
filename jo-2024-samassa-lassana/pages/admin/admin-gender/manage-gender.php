@@ -22,7 +22,7 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
     <link rel="stylesheet" href="../../../css/styles-computer.css">
     <link rel="stylesheet" href="../../../css/styles-responsive.css">
     <link rel="shortcut icon" href="../../../img/favicon-jo-2024.ico" type="image/x-icon">
-    <title>Liste des Utilisateurs - Jeux Olympiques 2024</title>
+    <title>Liste des Genres - Jeux Olympiques 2024</title>
     <style>
         /* Ajoutez votre style CSS ici */
         .action-buttons {
@@ -69,44 +69,46 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </nav>
     </header>
     <main>
-        <h1>Liste des Utilisateurs</h1>
+        <h1>Liste des Genres</h1>
         <div class="action-buttons">
-            <button onclick="openAddUserForm()">Ajouter un Utilisateur</button>
+            <button onclick="openAddGenderForm()">Ajouter un Genre</button>
             <!-- Autres boutons... -->
         </div>
-        <!-- Tableau des utilisateurs -->
+        <!-- Tableau des sports -->
         <?php
         require_once("../../../database/database.php");
 
         try {
-            // Requête pour récupérer la liste des utilisateurs depuis la base de données
-            $query = "SELECT * FROM UTILISATEUR ORDER BY nom_utilisateur, prenom_utilisateur";
+            // Requête pour récupérer la liste des sports depuis la base de données
+            $query = "SELECT * FROM Genre ORDER BY nom_genre";
             $statement = $connexion->prepare($query);
             $statement->execute();
 
             // Vérifier s'il y a des résultats
             if ($statement->rowCount() > 0) {
-                echo "<table><tr><th>Nom</th><th>Prénom</th><th>Login</th><th>Modifier</th><th>Supprimer</th></tr>";
+                echo "<table><tr><th>Genre</th><th>Modifier</th><th>Supprimer</th></tr>";
 
                 // Afficher les données dans un tableau
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr>";
                     // Assainir les données avant de les afficher
-                    echo "<td>" . htmlspecialchars($row['nom_utilisateur']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['prenom_utilisateur']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['login']) . "</td>";
-                    echo "<td><button onclick='openModifyUserForm({$row['id_utilisateur']})'>Modifier</button></td>";
-                    echo "<td><button onclick='deleteUserConfirmation({$row['id_utilisateur']})'>Supprimer</button></td>";
+                    echo "<td>" . htmlspecialchars($row['nom_genre']) . "</td>";
+                    echo "<td><button onclick='openModifyGenderForm({$row['id_genre']})'>Modifier</button></td>";
+                    echo "<td><button onclick='deleteGenderConfirmation({$row['id_genre']})'>Supprimer</button></td>";
                     echo "</tr>";
                 }
 
                 echo "</table>";
             } else {
-                echo "<p>Aucun utilisateur trouvé.</p>";
+                echo "<p>Aucun Genre trouvé.</p>";
             }
         } catch (PDOException $e) {
             echo "Erreur : " . $e->getMessage();
         }
+        // Afficher les erreurs en PHP
+// (fonctionne à condition d’avoir activé l’option en local)
+        error_reporting(E_ALL);
+        ini_set("display_errors", 1);
         ?>
         <p class="paragraph-link">
             <a class="link-home" href="../admin.php">Accueil administration</a>
@@ -119,22 +121,26 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </figure>
     </footer>
     <script>
-        function openAddUserForm() {
-            // Ouvrir une fenêtre pop-up avec le formulaire d'ajout d'utilisateur
-            window.location.href = 'add-user.php';
+        function openAddGenderForm() {
+            // Ouvrir une fenêtre pop-up avec le formulaire de modification
+            // L'URL contien un paramètre "id"
+            window.location.href = 'add-gender.php';
         }
 
-        function openModifyUserForm(id_utilisateur) {
-            // Ouvrir une fenêtre pop-up avec le formulaire de modification d'utilisateur
-            window.location.href = 'modify-user.php?id_utilisateur=' + id_utilisateur;
+        function openModifyGenderForm(id_genre) {
+            // Ajoutez ici le code pour afficher un formulaire stylisé pour modifier un Genre
+            // alert(id_sport);
+            window.location.href = 'modify-gender.php?id_genre=' + id_genre;
         }
 
-        function deleteUserConfirmation(id_utilisateur) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?")) {
-                window.location.href = 'delete-user.php?id=' + id_utilisateur;
+        function deleteGenderConfirmation(id_genre) {
+            // Ajoutez ici le code pour afficher une fenêtre de confirmation pour supprimer un Genre
+            if (confirm("Êtes-vous sûr de vouloir supprimer ce genre?")) {
+                // Ajoutez ici le code pour la suppression du Genre
+                // alert(id_sport);
+                window.location.href = 'delete-gender.php?id_genre=' + id_genre;
             }
         }
-
     </script>
 </body>
 

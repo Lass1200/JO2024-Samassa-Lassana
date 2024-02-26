@@ -1,7 +1,7 @@
 <?php
 session_start(); // Démarre la session PHP pour stocker des variables de session.
 
-require_once("database.php"); // Inclut le fichier de connexion à la base de données.
+require_once("database.php"); // Inclut le fichier de connexion à la base de données.  ÙB
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") { // Vérifie si la requête est une méthode POST (formulaire soumis).
     $login = $_POST["login"]; // Récupère la valeur du champ "login" du formulaire.

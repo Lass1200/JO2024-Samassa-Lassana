@@ -55,7 +55,7 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         <nav>
             <!-- Menu vers les pages sports, events, et results -->
             <ul class="menu">
-            <li><a href="../admin.php">Accueil Administration</a></li>
+                <li><a href="../admin.php">Accueil Administration</a></li>
                 <li><a href="../admin-users/manage-users.php">Gestion Utilisateurs</a></li>
                 <li><a href="../admin-sports/manage-sports.php">Gestion Sports</a></li>
                 <li><a href="../admin-places/manage-places.php">Gestion Lieux</a></li>

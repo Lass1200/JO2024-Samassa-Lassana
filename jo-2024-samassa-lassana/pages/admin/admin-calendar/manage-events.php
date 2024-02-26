@@ -1,17 +1,3 @@
-<?php
-session_start();
-
-// Vérifiez si l'utilisateur est connecté
-if (!isset($_SESSION['login'])) {
-    header('Location: ../../../index.php');
-    exit();
-}
-
-$login = $_SESSION['login'];
-$nom_utilisateur = $_SESSION['prenom_utilisateur'];
-$prenom_utilisateur = $_SESSION['nom_utilisateur'];
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
 
@@ -22,7 +8,7 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
     <link rel="stylesheet" href="../../../css/styles-computer.css">
     <link rel="stylesheet" href="../../../css/styles-responsive.css">
     <link rel="shortcut icon" href="../../../img/favicon-jo-2024.ico" type="image/x-icon">
-    <title>Liste des Utilisateurs - Jeux Olympiques 2024</title>
+    <title>Gestion des Événements - Jeux Olympiques 2024</title>
     <style>
         /* Ajoutez votre style CSS ici */
         .action-buttons {
@@ -46,13 +32,11 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
             color: #1b1b1b;
         }
     </style>
-
-
 </head>
 
 <body>
     <header>
-    <nav>
+        <nav>
             <!-- Menu vers les pages sports, events, et results -->
             <ul class="menu">
                 <li><a href="../admin.php">Accueil Administration</a></li>
@@ -69,49 +53,54 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </nav>
     </header>
     <main>
-        <h1>Liste des Utilisateurs</h1>
+        <h1>Gestion des Événements</h1>
         <div class="action-buttons">
-            <button onclick="openAddUserForm()">Ajouter un Utilisateur</button>
+            <button onclick="openAddEventForm()">Ajouter un événement</button>
             <!-- Autres boutons... -->
         </div>
-        <!-- Tableau des utilisateurs -->
-        <?php
-        require_once("../../../database/database.php");
+        <!-- Tableau des événements -->
+        <table>
+            <tr>
+                <th>Épreuve</th>
+                <th>Date</th>
+                <th>Heure</th>
+                <th>Lieu</th>
+                <th>Sport</th>
+                <th>Modifier</th>
+                <th>Supprimer</th>
+            </tr>
+            <?php
+            session_start();
+            require_once("../../../database/database.php");
 
-        try {
-            // Requête pour récupérer la liste des utilisateurs depuis la base de données
-            $query = "SELECT * FROM UTILISATEUR ORDER BY nom_utilisateur, prenom_utilisateur";
-            $statement = $connexion->prepare($query);
-            $statement->execute();
+            try {
+                $query = "SELECT e.*, l.nom_lieu, s.nom_sport 
+                          FROM epreuve e 
+                          INNER JOIN lieu l ON e.id_lieu = l.id_lieu 
+                          INNER JOIN sport s ON e.id_sport = s.id_sport 
+                          ORDER BY e.date_epreuve, e.heure_epreuve";
 
-            // Vérifier s'il y a des résultats
-            if ($statement->rowCount() > 0) {
-                echo "<table><tr><th>Nom</th><th>Prénom</th><th>Login</th><th>Modifier</th><th>Supprimer</th></tr>";
+                $statement = $connexion->query($query);
 
-                // Afficher les données dans un tableau
                 while ($row = $statement->fetch(PDO::FETCH_ASSOC)) {
                     echo "<tr>";
-                    // Assainir les données avant de les afficher
-                    echo "<td>" . htmlspecialchars($row['nom_utilisateur']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['prenom_utilisateur']) . "</td>";
-                    echo "<td>" . htmlspecialchars($row['login']) . "</td>";
-                    echo "<td><button onclick='openModifyUserForm({$row['id_utilisateur']})'>Modifier</button></td>";
-                    echo "<td><button onclick='deleteUserConfirmation({$row['id_utilisateur']})'>Supprimer</button></td>";
+                    echo "<td>" . htmlspecialchars($row['nom_epreuve']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['date_epreuve']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['heure_epreuve']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nom_lieu']) . "</td>";
+                    echo "<td>" . htmlspecialchars($row['nom_sport']) . "</td>";
+                    echo "<td><button onclick='openModifyEventForm(" . $row['id_epreuve'] . ")'>Modifier</button></td>";
+                    echo "<td><button onclick='deleteEventConfirmation(" . $row['id_epreuve'] . ")'>Supprimer</button></td>";
                     echo "</tr>";
                 }
-
-                echo "</table>";
-            } else {
-                echo "<p>Aucun utilisateur trouvé.</p>";
+            } catch (PDOException $e) {
+                echo '<p style="color: red;">Erreur de base de données : ' . $e->getMessage() . '</p>';
             }
-        } catch (PDOException $e) {
-            echo "Erreur : " . $e->getMessage();
-        }
-        ?>
+            ?>
+        </table>
         <p class="paragraph-link">
             <a class="link-home" href="../admin.php">Accueil administration</a>
         </p>
-
     </main>
     <footer>
         <figure>
@@ -119,22 +108,25 @@ $prenom_utilisateur = $_SESSION['nom_utilisateur'];
         </figure>
     </footer>
     <script>
-        function openAddUserForm() {
-            // Ouvrir une fenêtre pop-up avec le formulaire d'ajout d'utilisateur
-            window.location.href = 'add-user.php';
+        function openAddEventForm() {
+            alert('Ajouter un événement');
+            // Rediriger vers la page d'ajout d'événement
+            window.location.href = 'add-event.php';
         }
 
-        function openModifyUserForm(id_utilisateur) {
-            // Ouvrir une fenêtre pop-up avec le formulaire de modification d'utilisateur
-            window.location.href = 'modify-user.php?id_utilisateur=' + id_utilisateur;
+        function openModifyEventForm(id_epreuve) {
+            alert('ID de l\'événement à modifier : ' + id_epreuve);
+            // Rediriger vers la page de modification d'événement avec l'ID correspondant
+            window.location.href = 'modify-event.php?id_epreuve=' + id_epreuve;
         }
 
-        function deleteUserConfirmation(id_utilisateur) {
-            if (confirm("Êtes-vous sûr de vouloir supprimer cet utilisateur?")) {
-                window.location.href = 'delete-user.php?id=' + id_utilisateur;
+        function deleteEventConfirmation(id_epreuve) {
+            if (confirm("Êtes-vous sûr de vouloir supprimer cet événement?")) {
+                alert('Supprimer un événement : ' + id_epreuve);
+                // Rediriger vers la page de suppression d'événement avec l'ID correspondant
+                window.location.href = 'delete-event.php?id_epreuve=' + id_epreuve;
             }
         }
-
     </script>
 </body>
 

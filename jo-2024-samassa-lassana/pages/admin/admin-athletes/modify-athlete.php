@@ -24,6 +24,18 @@ if (!$id_athlete && $id_athlete !== 0) {
     exit();
 }
 
+// Récupérez les genres depuis la base de données
+$queryGenres = "SELECT * FROM GENRE";
+$statementGenres = $connexion->prepare($queryGenres);
+$statementGenres->execute();
+$genres = $statementGenres->fetchAll(PDO::FETCH_ASSOC);
+
+// Récupérez les pays depuis la base de données
+$queryCountries = "SELECT * FROM PAYS";
+$statementCountries = $connexion->prepare($queryCountries);
+$statementCountries->execute();
+$countries = $statementCountries->fetchAll(PDO::FETCH_ASSOC);
+
 // Vérifiez si le formulaire est soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assurez-vous d'obtenir des données sécurisées et filtrées
@@ -137,12 +149,33 @@ try {
             <label for="prenom_athlete">Prénom :</label>
             <input type="text" name="prenom_athlete" id="prenom_athlete"
                 value="<?php echo htmlspecialchars($athlete['prenom_athlete']); ?>" required>
-            <label for="id_genre">Genre (ID du genre) :</label>
-            <input type="number" name="id_genre" id="id_genre"
-                value="<?php echo htmlspecialchars($athlete['id_genre']); ?>" required>
-            <label for="id_pays">Pays (ID du pays) :</label>
-            <input type="number" name="id_pays" id="id_pays"
-                value="<?php echo htmlspecialchars($athlete['id_pays']); ?>">
+
+            <!-- Liste déroulante pour le genre -->
+            <label for="id_genre">Genre :</label>
+            <select name="id_genre" id="id_genre" required>
+                <?php
+                // Génération des options pour le genre
+                $selectedGenre = $athlete['id_genre'];
+                foreach ($genres as $genre) {
+                    $selected = ($genre['id_genre'] == $selectedGenre) ? 'selected' : '';
+                    echo "<option value='{$genre['id_genre']}' $selected>{$genre['nom_genre']}</option>";
+                }
+                ?>
+            </select>
+
+            <!-- Liste déroulante pour le pays -->
+            <label for="id_pays">Pays :</label>
+            <select name="id_pays" id="id_pays">
+                <?php
+                // Génération des options pour le pays
+                $selectedPays = $athlete['id_pays'];
+                foreach ($countries as $country) {
+                    $selected = ($country['id_pays'] == $selectedPays) ? 'selected' : '';
+                    echo "<option value='{$country['id_pays']}' $selected>{$country['nom_pays']}</option>";
+                }
+                ?>
+            </select>
+
             <input type="submit" value="Modifier l'Athlète">
         </form>
         <p class="paragraph-link">

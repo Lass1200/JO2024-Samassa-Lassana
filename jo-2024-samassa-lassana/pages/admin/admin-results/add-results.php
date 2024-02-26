@@ -67,12 +67,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <body>
     <header>
-        <nav>
+    <nav>
             <!-- Menu vers les pages sports, events, et results -->
             <ul class="menu">
-                <!-- ... Autres éléments du menu ... -->
+            <li><a href="../admin.php">Accueil Administration</a></li>
+                <li><a href="manage-users.php">Gestion Utilisateurs</a></li>
+                <li><a href="../admin-sports/manage-sports.php">Gestion Sports</a></li>
+                <li><a href="../admin-places/manage-places.php">Gestion Lieux</a></li>
+                <li><a href="../admin-calendar/manage-events.php">Gestion Calendrier</a></li>
+                <li><a href="../admin-pays/manage-countries.php">Gestion Pays</a></li>
+                <li><a href="../admin-gender/manage-gender.php">Gestion Genres</a></li>
+                <li><a href="../admin-athletes/manage-athletes.php">Gestion Athlètes</a></li>
                 <li><a href="../admin-results/manage-results.php">Gestion Résultats</a></li>
-                <!-- ... Autres éléments du menu ... -->
+                <li><a href="../../logout.php">Déconnexion</a></li>
             </ul>
         </nav>
     </header>

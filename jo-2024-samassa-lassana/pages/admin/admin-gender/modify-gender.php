@@ -8,88 +8,88 @@ if (!isset($_SESSION['login'])) {
     exit();
 }
 
-// Vérifiez si l'ID du PAYS est fourni dans l'URL
-if (!isset($_GET['id_pays'])) {
-    $_SESSION['error'] = "ID du PAYS manquant.";
-    header("Location: manage-countries.php");
+// Vérifiez si l'ID du genre est fourni dans l'URL
+if (!isset($_GET['id_genre'])) {
+    $_SESSION['error'] = "ID du genre manquant.";
+    header("Location: manage-genders.php");
     exit();
 }
 
-$id_pays = filter_input(INPUT_GET, 'id_pays', FILTER_VALIDATE_INT);
+$id_genre = filter_input(INPUT_GET, 'id_genre', FILTER_VALIDATE_INT);
 
-// Vérifiez si l'ID du PAYS est un entier valide
-if (!$id_pays && $id_pays !== 0) {
-    $_SESSION['error'] = "ID du PAYS invalide.";
-    header("Location: manage-countries.php");
+// Vérifiez si l'ID du genre est un entier valide
+if (!$id_genre && $id_genre !== 0) {
+    $_SESSION['error'] = "ID du genre invalide.";
+    header("Location: manage-gender.php");
     exit();
 }
 
 // Vérifiez si le formulaire est soumis
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Assurez-vous d'obtenir des données sécurisées et filtrées
-    $nomPays = filter_input(INPUT_POST, 'nomPays', FILTER_SANITIZE_STRING);
+    $nomGenre = filter_input(INPUT_POST, 'nomGenre', FILTER_SANITIZE_STRING);
 
-    // Vérifiez si le nom du PAYS est vide
-    if (empty($nomPays)) {
-        $_SESSION['error'] = "Le nom du PAYS ne peut pas être vide.";
-        header("Location: modify-countrie.php?id_pays=$id_pays");
+    // Vérifiez si le nom du genre est vide
+    if (empty($nomGenre)) {
+        $_SESSION['error'] = "Le nom du genre ne peut pas être vide.";
+        header("Location: modify-gender.php?id_genre=$id_genre");
         exit();
     }
 
     try {
-        // Vérifiez si le PAYS existe déjà
-        $queryCheck = "SELECT id_pays FROM Pays WHERE nom_pays = :nomPays AND id_pays <> :idPays";
+        // Vérifiez si le genre existe déjà
+        $queryCheck = "SELECT id_genre FROM Genre WHERE nom_genre = :nomGenre AND id_genre <> :idGenre";
         $statementCheck = $connexion->prepare($queryCheck);
-        $statementCheck->bindParam(":nomPays", $nomPays, PDO::PARAM_STR);
-        $statementCheck->bindParam(":idPays", $id_pays, PDO::PARAM_INT);
+        $statementCheck->bindParam(":nomGenre", $nomGenre, PDO::PARAM_STR);
+        $statementCheck->bindParam(":idGenre", $id_genre, PDO::PARAM_INT);
         $statementCheck->execute();
 
         if ($statementCheck->rowCount() > 0) {
-            $_SESSION['error'] = "Le PAYS existe déjà.";
-            header("Location: modify-countrie.php?id_pays=$id_pays");
+            $_SESSION['error'] = "Le Genre existe déjà.";
+            header("Location: modify-gender.php?id_genre=$id_genre");
             exit();
         }
 
-        // Requête pour mettre à jour le PAYS
-        $query = "UPDATE Pays SET nom_pays = :nomPays WHERE id_pays = :idPays";
+        // Requête pour mettre à jour le genre
+        $query = "UPDATE genre SET nom_genre = :nomGenre WHERE id_genre = :idGenre";
         $statement = $connexion->prepare($query);
-        $statement->bindParam(":nomPays", $nomPays, PDO::PARAM_STR);
-        $statement->bindParam(":idPays", $id_pays, PDO::PARAM_INT);
+        $statement->bindParam(":nomGenre", $nomGenre, PDO::PARAM_STR);
+        $statement->bindParam(":idGenre", $id_genre, PDO::PARAM_INT);
 
         // Exécutez la requête
         if ($statement->execute()) {
-            $_SESSION['success'] = "Le PAYS a été modifié avec succès.";
-            header("Location: manage-countries.php");
+            $_SESSION['success'] = "Le genre a été modifié avec succès.";
+            header("Location: manage-genders.php");
             exit();
         } else {
-            $_SESSION['error'] = "Erreur lors de la modification du PAYS.";
-            header("Location: modify-countrie.php?id_pays=$id_pays");
+            $_SESSION['error'] = "Erreur lors de la modification du genre.";
+            header("Location: modify-genders.php?id_genre=$id_genre");
             exit();
         }
     } catch (PDOException $e) {
         $_SESSION['error'] = "Erreur de base de données : " . $e->getMessage();
-        header("Location: modify-countrie.php?id_pays=$id_pays");
+        header("Location: modify-genders.php?id_genre=$id_genre");
         exit();
     }
 }
 
-// Récupérez les informations du PAYS pour affichage dans le formulaire
+// Récupérez les informations du genre pour affichage dans le formulaire
 try {
-    $querySport = "SELECT nom_pays FROM Pays WHERE id_pays = :idPays";
+    $querySport = "SELECT nom_genre FROM genre WHERE id_genre = :idGenre";
     $statementSport = $connexion->prepare($querySport);
-    $statementSport->bindParam(":idPays", $id_pays, PDO::PARAM_INT);
+    $statementSport->bindParam(":idGenre", $id_genre, PDO::PARAM_INT);
     $statementSport->execute();
 
     if ($statementSport->rowCount() > 0) {
-        $PAYS = $statementSport->fetch(PDO::FETCH_ASSOC);
+        $genre = $statementSport->fetch(PDO::FETCH_ASSOC);
     } else {
-        $_SESSION['error'] = "PAYS non trouvé.";
-        header("Location: manage-countries.php");
+        $_SESSION['error'] = "Genre non trouvé.";
+        header("Location: manage-genrders.php");
         exit();
     }
 } catch (PDOException $e) {
     $_SESSION['error'] = "Erreur de base de données : " . $e->getMessage();
-    header("Location: manage-countries.php");
+    header("Location: manage-genders.php");
     exit();
 }
 ?>
@@ -104,14 +104,16 @@ try {
     <link rel="stylesheet" href="../../../css/styles-computer.css">
     <link rel="stylesheet" href="../../../css/styles-responsive.css">
     <link rel="shortcut icon" href="../../../img/favicon-jo-2024.ico" type="image/x-icon">
-    <title>Modifier un PAYS - Jeux Olympiques 2024</title>
-    <!-- ... (Le reste du code reste inchangé) -->
+    <title>Modifier un Genre - Jeux Olympiques 2024</title>
+    <style>
+        /* Ajoutez votre style CSS ici */
+    </style>
 </head>
 
 <body>
     <header>
         <nav>
-            <!-- Menu vers les pages sports, events, et results -->
+            <!-- Menu vers les pages genders, events, et results -->
             <ul class="menu">
                 <li><a href="../admin.php">Accueil Administration</a></li>
                 <li><a href="../admin-users/manage-users.php">Gestion Utilisateurs</a></li>
@@ -127,22 +129,22 @@ try {
         </nav>
     </header>
     <main>
-        <h1>Modifier un PAYS</h1>
+        <h1>Modifier un genre</h1>
         <?php
         if (isset($_SESSION['error'])) {
             echo '<p style="color: red;">' . $_SESSION['error'] . '</p>';
             unset($_SESSION['error']);
         }
         ?>
-        <form action="modify-countrie.php?id_pays=<?php echo $id_pays; ?>" method="post"
-            onsubmit="return confirm('Êtes-vous sûr de vouloir modifier ce PAYS?')">
-            <label for="nomPays">Nom du PAYS :</label>
-            <input type="text" name="nomPays" id="nomPays"
-                value="<?php echo htmlspecialchars($PAYS['nom_pays']); ?>" required>
-            <input type="submit" value="Modifier le PAYS">
+        <form action="modify-gender.php?id_genre=<?php echo $id_genre; ?>" method="post"
+            onsubmit="return confirm('Êtes-vous sûr de vouloir modifier ce genre?')">
+            <label for=" nomGenre">Nom du Genre :</label>
+            <input type="text" name="nomGenre" id="nomGenre"
+                value="<?php echo htmlspecialchars($genre['nom_genre']); ?>" required>
+            <input type="submit" value="Modifier le Genre">
         </form>
         <p class="paragraph-link">
-            <a class="link-home" href="manage-countries.php">Retour à la gestion des sports</a>
+            <a class="link-home" href="manage-genders.php">Retour à la gestion des Genres</a>
         </p>
     </main>
     <footer>
